@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mobility Bible</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#09090b;--surface:#111116;--card:#17171d;--border:#222228;
+  --accent:#e8ff47;--upper:#ff6b35;--lower:#38bdf8;
+  --iso:#a78bfa;--weighted:#fb923c;--fascia:#f472b6;--pnf:#34d399;--stretch:#94a3b8;--mob:#64748b;
+  --text:#e2e8f0;--dim:#64748b;--muted:#3f4555;
+  --r:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* HEADER */
+header{position:sticky;top:0;z-index:200;background:rgba(9,9,11,.96);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+.hdr{max-width:1100px;margin:0 auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+.logo{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;color:var(--accent);white-space:nowrap}
+.logo span{color:var(--dim)}
+.sw{flex:1;position:relative}
+#search{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:9px 14px 9px 36px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+#search:focus{border-color:var(--accent)}
+#search::placeholder{color:var(--dim)}
+.si{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--dim);font-size:15px;pointer-events:none}
+#sc{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+
+/* FILTERS */
+.fbar{background:var(--surface);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+.fbar::-webkit-scrollbar{display:none}
+.fi{max-width:1100px;margin:0 auto;display:flex;gap:6px;padding:8px 16px;white-space:nowrap}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:99px;border:1px solid var(--border);background:var(--card);color:var(--dim);font-size:12px;font-weight:500;cursor:pointer;transition:all .15s;user-select:none}
+.pill:hover{border-color:var(--muted);color:var(--text)}
+.pill.active{color:#000;font-weight:600}
+.pill[data-f="all"].active{background:var(--accent);border-color:var(--accent)}
+.pill[data-f="upper"].active{background:var(--upper);border-color:var(--upper);color:#fff}
+.pill[data-f="lower"].active{background:var(--lower);border-color:var(--lower)}
+.pill[data-f="iso"].active{background:var(--iso);border-color:var(--iso)}
+.pill[data-f="weighted"].active{background:var(--weighted);border-color:var(--weighted)}
+.pill[data-f="fascia"].active{background:var(--fascia);border-color:var(--fascia)}
+.pill[data-f="pnf"].active{background:var(--pnf);border-color:var(--pnf)}
+.pill[data-f="stretch"].active{background:var(--stretch);border-color:var(--stretch)}
+.pill[data-f="mob"].active{background:var(--mob);border-color:var(--mob);color:#fff}
+.pd{width:5px;height:5px;border-radius:50%}
+
+/* HERO */
+.hero{max-width:1100px;margin:0 auto;padding:36px 16px 24px}
+.htag{font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--accent);text-transform:uppercase;margin-bottom:12px}
+.hero h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(44px,9vw,88px);letter-spacing:3px;line-height:.92;margin-bottom:12px}
+.hero h1 em{color:var(--accent);font-style:normal}
+.hsub{color:var(--dim);font-size:14px;max-width:520px;line-height:1.7;margin-bottom:24px}
+.stats{display:flex;gap:28px;flex-wrap:wrap}
+.stat{display:flex;flex-direction:column;gap:1px}
+.sn{font-family:'Bebas Neue',sans-serif;font-size:32px;color:var(--accent);letter-spacing:2px}
+.sl{font-size:11px;color:var(--dim);letter-spacing:1px}
+
+/* DAY TABS */
+.day-tabs{max-width:1100px;margin:0 auto 0;padding:0 16px 24px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.day-tab{border-radius:var(--r);border:1px solid var(--border);padding:20px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.day-tab::before{content:'';position:absolute;top:0;left:0;right:0;height:3px}
+.day-tab.upper-tab::before{background:var(--upper)}
+.day-tab.lower-tab::before{background:var(--lower)}
+.day-tab:hover{transform:translateY(-2px)}
+.day-tab.upper-tab{background:rgba(255,107,53,.05);border-color:rgba(255,107,53,.25)}
+.day-tab.lower-tab{background:rgba(56,189,248,.05);border-color:rgba(56,189,248,.25)}
+.dt-label{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:3px;margin-bottom:6px;text-transform:uppercase}
+.upper-tab .dt-label{color:var(--upper)}
+.lower-tab .dt-label{color:var(--lower)}
+.dt-title{font-family:'Bebas Neue',sans-serif;font-size:24px;letter-spacing:2px;margin-bottom:8px}
+.dt-parts{font-size:11px;color:var(--dim);line-height:1.9}
+.dt-count{font-family:'JetBrains Mono',monospace;font-size:10px;margin-top:10px}
+.upper-tab .dt-count{color:var(--upper)}
+.lower-tab .dt-count{color:var(--lower)}
+
+/* POST-WORKOUT PROTOCOLS */
+.pw-section{max-width:1100px;margin:0 auto;padding:0 16px 32px}
+.pw-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.pw-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.pw-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pw-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);overflow:hidden}
+.pw-hdr{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--border)}
+.pw-hdr h3{font-size:13px;font-weight:600}
+.pw-hdr .tm{margin-left:auto;font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim)}
+.pwbar{height:2px;width:100%}
+.pw-step{display:flex;align-items:flex-start;gap:10px;padding:8px 16px;border-bottom:1px solid rgba(34,34,40,.6);font-size:12px}
+.pw-step:last-child{border-bottom:none}
+.psn{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--dim);flex-shrink:0;margin-top:1px;width:20px}
+.psinfo{flex:1}
+.psname{font-weight:500;margin-bottom:1px}
+.psdetail{font-size:11px;color:var(--dim)}
+.pst{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);flex-shrink:0}
+
+/* BODY PART SECTIONS */
+.main{max-width:1100px;margin:0 auto;padding:0 16px 80px}
+.bp-section{margin-bottom:8px;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:all .2s}
+.bp-section.hidden-section{display:none}
+.bp-header{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;background:var(--surface);transition:background .15s;user-select:none}
+.bp-header:hover{background:var(--card)}
+.bp-day-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.bp-day-dot.upper{background:var(--upper)}
+.bp-day-dot.lower{background:var(--lower)}
+.bp-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:2px;flex:1}
+.bp-meta{font-size:11px;color:var(--dim);font-family:'JetBrains Mono',monospace}
+.bp-count{font-family:'JetBrains Mono',monospace;font-size:11px;margin-left:auto}
+.upper .bp-count{color:var(--upper)}
+.lower .bp-count{color:var(--lower)}
+.bp-arrow{color:var(--dim);font-size:14px;transition:transform .2s;margin-left:8px}
+.bp-section.open .bp-arrow{transform:rotate(180deg)}
+.bp-body{display:none;padding:0 0 4px}
+.bp-section.open .bp-body{display:block}
+.bp-info{padding:10px 18px;font-size:12px;color:var(--dim);line-height:1.6;border-bottom:1px solid var(--border);font-style:italic}
+
+/* EXERCISE CARDS IN SECTION */
+.ex-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:10px;padding:12px 12px}
+.ex-card{background:var(--bg);border:1px solid var(--border);border-radius:8px;overflow:hidden;transition:border-color .15s}
+.ex-card:hover{border-color:var(--muted)}
+.ex-card.hidden{display:none}
+.ex-top{padding:14px 14px 10px;border-bottom:1px solid var(--border)}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
+.badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:1px;padding:2px 7px;border-radius:4px;font-weight:600;text-transform:uppercase}
+.b-upper{background:rgba(255,107,53,.12);color:var(--upper);border:1px solid rgba(255,107,53,.25)}
+.b-lower{background:rgba(56,189,248,.12);color:var(--lower);border:1px solid rgba(56,189,248,.25)}
+.b-iso{background:rgba(167,139,250,.12);color:var(--iso);border:1px solid rgba(167,139,250,.25)}
+.b-weighted{background:rgba(251,146,60,.12);color:var(--weighted);border:1px solid rgba(251,146,60,.25)}
+.b-fascia{background:rgba(244,114,182,.12);color:var(--fascia);border:1px solid rgba(244,114,182,.25)}
+.b-pnf{background:rgba(52,211,153,.12);color:var(--pnf);border:1px solid rgba(52,211,153,.25)}
+.b-stretch{background:rgba(148,163,184,.12);color:var(--stretch);border:1px solid rgba(148,163,184,.25)}
+.b-mob{background:rgba(100,116,139,.12);color:var(--mob);border:1px solid rgba(100,116,139,.25)}
+.ex-name{font-size:14px;font-weight:600;line-height:1.3;margin-bottom:3px}
+.ex-part{font-size:10px;color:var(--dim);font-family:'JetBrains Mono',monospace;letter-spacing:.5px}
+.ex-bottom{padding:10px 14px}
+.ex-row{display:flex;gap:8px;font-size:11px;margin-bottom:5px}
+.ex-row:last-child{margin-bottom:0}
+.ex-lbl{color:var(--dim);flex-shrink:0;width:52px}
+.ex-equip{color:var(--iso);font-family:'JetBrains Mono',monospace;font-size:10px}
+.ex-sets{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:10px}
+.ex-note{font-size:11px;color:var(--dim);line-height:1.55;padding-top:8px;border-top:1px solid var(--border);margin-top:6px}
+
+/* NO RESULTS */
+#no-res{display:none;text-align:center;padding:60px 20px;color:var(--muted)}
+#no-res .big{font-family:'Bebas Neue',sans-serif;font-size:40px;letter-spacing:4px;color:var(--border);margin-bottom:8px}
+
+/* EQUIP KEY */
+.ekey{max-width:1100px;margin:0 auto 24px;padding:0 16px}
+.ekey-inner{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;display:flex;flex-wrap:wrap;gap:10px 20px;font-size:11px}
+.ek{display:flex;align-items:center;gap:5px}
+.ea{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--iso);font-weight:600}
+
+/* PNF SECTION */
+.pnf-section{max-width:1100px;margin:0 auto;padding:0 16px 60px}
+.sec-title{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:2px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.sec-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.pnf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.pnf-card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:14px}
+.pnf-card h4{font-size:13px;font-weight:600;margin-bottom:6px}
+.pnf-card p{font-size:11px;color:var(--dim);line-height:1.6}
+.pnf-eq{color:var(--iso);font-family:'JetBrains Mono',monospace;font-size:10px}
+.pnf-sets{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:10px}
+
+/* BACK TO TOP */
+#ttop{position:fixed;bottom:20px;right:20px;width:40px;height:40px;background:var(--accent);color:#000;border:none;border-radius:50%;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(232,255,71,.3);z-index:99;transition:transform .15s}
+#ttop:hover{transform:scale(1.1)}
+
+/* SECTION LABEL LINE */
+.day-label{max-width:1100px;margin:0 auto;padding:32px 16px 12px;display:flex;align-items:center;gap:12px}
+.day-label span{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:3px;color:var(--dim)}
+.day-label hr{flex:1;border:none;border-top:1px solid var(--border)}
+
+@media(max-width:600px){
+  .day-tabs,.pw-grid{grid-template-columns:1fr}
+  .ex-grid{grid-template-columns:1fr}
+  .hero h1{font-size:50px}
+  .stats{gap:18px}
+  .hdr{flex-wrap:nowrap}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hdr">
+    <div class="logo">MOBILITY<span> BIBLE</span></div>
+    <div class="sw">
+      <span class="si">⌕</span>
+      <input type="text" id="search" placeholder="Search exercises, muscles, equipment…" autocomplete="off">
+      <span id="sc"></span>
+    </div>
+  </div>
+</header>
+
+<div class="fbar">
+  <div class="fi">
+    <div class="pill active" data-f="all">All</div>
+    <div class="pill" data-f="upper"><span class="pd" style="background:var(--upper)"></span>Upper</div>
+    <div class="pill" data-f="lower"><span class="pd" style="background:var(--lower)"></span>Lower</div>
+    <div class="pill" data-f="iso"><span class="pd" style="background:var(--iso)"></span>Isometrics</div>
+    <div class="pill" data-f="weighted"><span class="pd" style="background:var(--weighted)"></span>Weighted</div>
+    <div class="pill" data-f="fascia"><span class="pd" style="background:var(--fascia)"></span>Fascia</div>
+    <div class="pill" data-f="pnf"><span class="pd" style="background:var(--pnf)"></span>PNF</div>
+    <div class="pill" data-f="stretch"><span class="pd" style="background:var(--stretch)"></span>Stretch</div>
+    <div class="pill" data-f="mob"><span class="pd" style="background:var(--mob)"></span>Mobility</div>
+  </div>
+</div>
+
+<div class="hero">
+  <div class="htag">// Upper · Lower Split · Complete Reference</div>
+  <h1>COMPLETE<br><em>MOBILITY BIBLE</em></h1>
+  <p class="hsub">Every joint. Every method. Weighted mobility, deep fascia, isometrics, CARs, PNF — organised by body part with full exercise details. Built for iPhone.</p>
+  <div class="stats">
+    <div class="stat"><span class="sn" id="total-count">0</span><span class="sl">Total Exercises</span></div>
+    <div class="stat"><span class="sn">19</span><span class="sl">Body Parts</span></div>
+    <div class="stat"><span class="sn">6</span><span class="sl">Methods</span></div>
+    <div class="stat"><span class="sn">2</span><span class="sl">Day Split</span></div>
+  </div>
+</div>
+
+<div class="day-tabs">
+  <div class="day-tab upper-tab" onclick="setFilter('upper')">
+    <div class="dt-label">Day A — Upper</div>
+    <div class="dt-title">UPPER DAY</div>
+    <div class="dt-parts">Neck · Shoulders · Chest<br>Thoracic Spine · Lats<br>Biceps · Triceps · Forearms<br>Wrists · Hands · Fingers</div>
+    <div class="dt-count" id="upper-count"></div>
+  </div>
+  <div class="day-tab lower-tab" onclick="setFilter('lower')">
+    <div class="dt-label">Day B — Lower</div>
+    <div class="dt-title">LOWER DAY</div>
+    <div class="dt-parts">Hips · Glutes · Quads · Knees<br>Hamstrings · Adductors · IT Band<br>Calves · Ankles · Shins · Feet<br>Lumbar · QL · Abs · Core</div>
+    <div class="dt-count" id="lower-count"></div>
+  </div>
+</div>
+
+<!-- POST-WORKOUT PROTOCOLS -->
+<div class="pw-section">
+  <div class="pw-title">POST-WORKOUT PROTOCOLS</div>
+  <div class="pw-grid">
+    <div class="pw-card">
+      <div class="pwbar" style="background:var(--upper)"></div>
+      <div class="pw-hdr"><span>💪</span><h3>After Upper Day</h3><span class="tm">~20 MIN</span></div>
+      <div class="pw-step"><span class="psn">01</span><div class="psinfo"><div class="psname">Shoulder Band Distraction</div><div class="psdetail">Heavy band — glenohumeral decompression</div></div><span class="pst">90s × 2</span></div>
+      <div class="pw-step"><span class="psn">02</span><div class="psinfo"><div class="psname">Pec Minor Doorway (3 angles)</div><div class="psdetail">BW — low / mid / high position</div></div><span class="pst">45s × 3</span></div>
+      <div class="pw-step"><span class="psn">03</span><div class="psinfo"><div class="psname">Child's Pose Lat Stretch (KB)</div><div class="psdetail">8kg KB — thoracolumbar junction</div></div><span class="pst">60s × 2</span></div>
+      <div class="pw-step"><span class="psn">04</span><div class="psinfo"><div class="psname">Thoracic Foam Roll Full T-Spine</div><div class="psdetail">Roller + 5kg WB — T1 to T12 segmental</div></div><span class="pst">3 min</span></div>
+      <div class="pw-step"><span class="psn">05</span><div class="psinfo"><div class="psname">Cross-Body Posterior Capsule</div><div class="psdetail">BW — posterior shoulder release</div></div><span class="pst">45s × 2</span></div>
+      <div class="pw-step"><span class="psn">06</span><div class="psinfo"><div class="psname">Neck Side-Stretch with DB</div><div class="psdetail">1–2kg DB opposite hand — SCM & scalene</div></div><span class="pst">45s × 2</span></div>
+      <div class="pw-step"><span class="psn">07</span><div class="psinfo"><div class="psname">Prayer + Reverse Prayer Wrist</div><div class="psdetail">BW — flexor & extensor retinaculum</div></div><span class="pst">45s × 2</span></div>
+      <div class="pw-step"><span class="psn">08</span><div class="psinfo"><div class="psname">Forearm Fascial Roll (Bar)</div><div class="psdetail">Barbell knurling — all forearm surfaces</div></div><span class="pst">60s × 2</span></div>
+      <div class="pw-step"><span class="psn">09</span><div class="psinfo"><div class="psname">Sleeper Stretch (Posterior Capsule)</div><div class="psdetail">BW / 1kg wrist weight — IR deficit</div></div><span class="pst">60s × 2</span></div>
+      <div class="pw-step"><span class="psn">10</span><div class="psinfo"><div class="psname">Supination / Pronation with DB</div><div class="psdetail">1–3kg DB — radioulnar joint restore</div></div><span class="pst">15 reps × 2</span></div>
+    </div>
+    <div class="pw-card">
+      <div class="pwbar" style="background:var(--lower)"></div>
+      <div class="pw-hdr"><span>🦵</span><h3>After Lower Day</h3><span class="tm">~25 MIN</span></div>
+      <div class="pw-step"><span class="psn">01</span><div class="psinfo"><div class="psname">Hip Band Distraction</div><div class="psdetail">Heavy band — acetabular decompression</div></div><span class="pst">90s × 2</span></div>
+      <div class="pw-step"><span class="psn">02</span><div class="psinfo"><div class="psname">Couch Stretch with DB</div><div class="psdetail">5kg DB at chest — deep hip flexor</div></div><span class="pst">90s × 2</span></div>
+      <div class="pw-step"><span class="psn">03</span><div class="psinfo"><div class="psname">Pigeon / 90-90 with Sandbag</div><div class="psdetail">5–10kg SB — glute & external rotators</div></div><span class="pst">90s × 2</span></div>
+      <div class="pw-step"><span class="psn">04</span><div class="psinfo"><div class="psname">Supine Hamstring Stretch (Band)</div><div class="psdetail">Resistance band — posterior chain</div></div><span class="pst">60s × 2</span></div>
+      <div class="pw-step"><span class="psn">05</span><div class="psinfo"><div class="psname">Butterfly Adductor with WB</div><div class="psdetail">5kg WB on inner thighs</div></div><span class="pst">90s</span></div>
+      <div class="pw-step"><span class="psn">06</span><div class="psinfo"><div class="psname">Foam Roll Quads (Both)</div><div class="psdetail">Roller + hand press — VL & rectus</div></div><span class="pst">90s × 2</span></div>
+      <div class="pw-step"><span class="psn">07</span><div class="psinfo"><div class="psname">QL Lacrosse Ball Release</div><div class="psdetail">Lacrosse ball — single most important LB fix</div></div><span class="pst">90s × 2</span></div>
+      <div class="pw-step"><span class="psn">08</span><div class="psinfo"><div class="psname">Lumbar Traction Hang</div><div class="psdetail">Bar + 5kg ankle weights — decompression</div></div><span class="pst">45s × 3</span></div>
+      <div class="pw-step"><span class="psn">09</span><div class="psinfo"><div class="psname">Ankle Dorsiflexion Lunge (Wall)</div><div class="psdetail">BW — restore DF range post-squat</div></div><span class="pst">12 reps + 15s</span></div>
+      <div class="pw-step"><span class="psn">10</span><div class="psinfo"><div class="psname">Plantar Fascia Ball Roll</div><div class="psdetail">Lacrosse ball — heel / arch / ball of foot</div></div><span class="pst">90s × 2</span></div>
+      <div class="pw-step"><span class="psn">11</span><div class="psinfo"><div class="psname">Towel Toe Curls</div><div class="psdetail">Towel — intrinsic foot recovery</div></div><span class="pst">3 × 20</span></div>
+      <div class="pw-step"><span class="psn">12</span><div class="psinfo"><div class="psname">Diaphragmatic Breathing</div><div class="psdetail">2kg SB on belly — nervous system reset</div></div><span class="pst">5 min</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- EQUIPMENT KEY -->
+<div class="ekey">
+  <div class="ekey-inner">
+    <div style="font-size:10px;font-weight:600;color:var(--dim);width:100%;letter-spacing:1px;font-family:'JetBrains Mono',monospace;margin-bottom:2px">EQUIPMENT KEY</div>
+    <div class="ek"><span class="ea">DB</span>Dumbbell</div>
+    <div class="ek"><span class="ea">KB</span>Kettlebell</div>
+    <div class="ek"><span class="ea">BB</span>Barbell</div>
+    <div class="ek"><span class="ea">WB</span>Weighted / Medicine Ball</div>
+    <div class="ek"><span class="ea">WP</span>Weight Plate</div>
+    <div class="ek"><span class="ea">Band</span>Resistance Band</div>
+    <div class="ek"><span class="ea">AW</span>Ankle Weight</div>
+    <div class="ek"><span class="ea">WW</span>Wrist Weight</div>
+    <div class="ek"><span class="ea">SB</span>Sandbag</div>
+    <div class="ek"><span class="ea">BW</span>Bodyweight</div>
+  </div>
+</div>
+
+<!-- UPPER DAY SECTIONS -->
+<div class="day-label"><hr><span>UPPER DAY</span><hr></div>
+<div class="main" id="main-upper"></div>
+
+<!-- LOWER DAY SECTIONS -->
+<div class="day-label"><hr><span>LOWER DAY</span><hr></div>
+<div class="main" id="main-lower"></div>
+
+<div id="no-res"><div class="big">NO RESULTS</div><p>Try a different search or filter</p></div>
+
+<!-- PNF REFERENCE -->
+<div class="day-label"><hr><span>PNF REFERENCE</span><hr></div>
+<div class="pnf-section">
+  <p style="font-size:12px;color:var(--dim);margin-bottom:14px">Contract target muscle at 70–80% MVC for 10s → relax → stretch deeper for 30s → repeat 3–5 cycles. Best method for permanent range gains.</p>
+  <div class="pnf-grid" id="pnf-grid"></div>
+</div>
+
+<button id="ttop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+// ═══════════════════════════════════════════
+// DATA — Body parts with exercises
+// ═══════════════════════════════════════════
+const bodyParts = [
+  // ─── UPPER ───
+  {
+    id:'neck', day:'upper', name:'Neck & Cervical Spine',
+    info:'Joints: Atlanto-occipital, C1–C7 cervical facets. Fascia: Nuchal ligament, deep cervical fascia, SCM fascia. Note: NEVER do full backward circles — ear-to-shoulder arcs only.',
+    exercises:[
+      {n:'Neck Half-Circles',t:['mob'],e:'BW',s:'2×10 each direction',d:'Ear to shoulder, chin to chest arc. NEVER full backward circles.'},
+      {n:'Side-Neck Stretch with DB',t:['weighted','stretch'],e:'DB 1–2.5kg (opposite hand)',s:'2×30–45s each side',d:'Stand, ear to shoulder. DB in opposite hand adds traction pull through SCM and scalenes.'},
+      {n:'Chin Tucks — Axial Extension',t:['mob','iso'],e:'BW / light band on occiput',s:'3×15 reps',d:"Create a 'double chin'. Resets forward head posture. Band adds gentle resistance."},
+      {n:'Cervical Rotation with Band',t:['weighted','mob'],e:'Light band anchored at ear height',s:'3×12 each side',d:'Band provides resistance through rotation range. Strengthens deep cervical rotators.'},
+      {n:'Neck Flexion ISO Hold',t:['iso'],e:'WP 2–4kg on forehead (lying face-up)',s:'3×20–30s',d:'Deep cervical flexors. Do NOT perform with any neck pain.'},
+      {n:'Neck Extension ISO Hold',t:['iso'],e:'WP 1–2kg on back of head (face-down)',s:'3×20–30s',d:'Posterior cervical chain strengthening.'},
+      {n:'SCM Stretch (Sternocleidomastoid)',t:['stretch'],e:'BW / opposite hand DB for traction',s:'2×40s each side',d:'Rotate head away, extend back, tilt away. Three-plane SCM release.'},
+      {n:'Scalene Stretch',t:['stretch'],e:'BW',s:'2×40s each side',d:'Chin down, tilt head away, rotate slightly toward side. Breathe into side ribs.'},
+      {n:'Levator Scapulae Stretch',t:['stretch'],e:'BW / DB 1–2kg same-side hand',s:'2×40s each side',d:'Look toward opposite hip. DB in same-side hand adds scapular depression.'},
+      {n:'Suboccipital Ball Release',t:['fascia'],e:'Tennis or lacrosse ball at skull base',s:'2×60s each side',d:'Lie on ball at base of skull, nod gently. Deep suboccipital fascial release.'},
+      {n:'Cervical Lateral Flexion PNF',t:['pnf'],e:'BW — hand provides resistance',s:'5× 10s push + 30s stretch each side',d:'Press head into hand at 70%, relax, allow ear to drop further toward shoulder each cycle.'},
+      {n:'Neck Side-Stretch with Traction DB',t:['stretch','weighted'],e:'DB 1–2.5kg dangling from opposite hand',s:'2×45s each side',d:'Ear to shoulder; DB hanging from opposite arm adds gentle lateral distraction through scalenes.'},
+    ]
+  },
+  {
+    id:'shoulder', day:'upper', name:'Shoulders — Glenohumeral & Rotator Cuff',
+    info:'Joints: Glenohumeral (ball-and-socket), AC joint, SC joint, scapulothoracic. Fascia: Rotator cuff fascia, deltoid fascia, pectoral fascia. Most mobile joint = most injury-prone. Train all planes.',
+    exercises:[
+      {n:'Shoulder CAR (Controlled Articular Rotation)',t:['mob','weighted'],e:'BW → DB 2–5kg',s:'3×5 each arm each direction',d:'Full circumduction of glenohumeral joint both directions. Slow, maximum range. DB loads end range.'},
+      {n:'Arm Circles with Wrist Weights',t:['mob','weighted'],e:'WW 0.5–2kg each arm',s:'2×20 each direction',d:'Builds active mobility through full shoulder arc under constant load.'},
+      {n:'Bottoms-Up KB Press',t:['weighted','iso'],e:'KB 8–16kg',s:'3×8 each side',d:"Bottoms-up grip maximally loads rotator cuff. Press overhead controlled. The 'wobble' forces stabiliser co-contraction."},
+      {n:'Windmill (KB)',t:['weighted','mob'],e:'KB 12–24kg overhead',s:'3×6 each side',d:'Simultaneously works shoulder stability, thoracic rotation, and hip hinge. Eye stays on KB throughout.'},
+      {n:'Overhead Tricep Stretch with DB',t:['weighted','stretch'],e:'DB 5–10kg',s:'2×45s each side',d:'Arm behind head, elbow pointing up. DB increases traction on long head tricep and posterior capsule.'},
+      {n:'Cross-Body Posterior Capsule Stretch (Band)',t:['stretch'],e:'Light resistance band anchored to side',s:'2×40s each side',d:'Band adds horizontal adduction load. Posterior capsule and rear deltoid.'},
+      {n:'Sleeper Stretch (Posterior Capsule)',t:['stretch'],e:'BW / WW 1–2kg on top arm',s:'2×60s each side',d:'Side-lying, arm at 90°, rotate forearm toward floor. Wrist weight deepens stretch gently.'},
+      {n:'Doorway Pec / Anterior Capsule Stretch',t:['stretch'],e:'BW / WW 0.5–1kg',s:'2×45s × 3 positions (low / mid / high)',d:'Three positions release pec minor and anterior capsule at different fiber angles.'},
+      {n:'Shoulder Flexion End-Range ISO',t:['iso'],e:'KB 8–16kg / wall press',s:'3×15s each arm',d:'Arm at full overhead flexion, press into wall isometrically. Serratus and upper trap.'},
+      {n:'External Rotation ISO (90/90 Position)',t:['iso'],e:'Resistance band + wall',s:'3×20s each side',d:'Arm at 90° abduction, forearm vertical. Press into band externally. Infraspinatus & teres minor.'},
+      {n:'Band Pull-Apart',t:['weighted','mob'],e:'Light-medium resistance band',s:'3×20',d:'Horizontal shoulder retraction. Posterior deltoid, rhomboids under load.'},
+      {n:'Banded Shoulder Distraction',t:['mob','fascia'],e:'Light band looped on wrist, anchored low',s:'2×60s each arm',d:'Band distracts femoral head from acetabulum. Rock forward/back. Decompresses joint, improves IR/ER.'},
+      {n:'Wall Slides (Overhead)',t:['mob','weighted'],e:'BW / WW 0.5kg',s:'3×12',d:'Forearms on wall, slide up then down. Lower trap and serratus activation.'},
+      {n:'LYTP Series Prone',t:['weighted','mob'],e:'DB 2–5kg each hand',s:'3×10 each letter',d:'L, Y, T, P positions lying face-down. Lower trap, mid trap, rhomboid fascial loading.'},
+      {n:'Cuban Press',t:['weighted','mob'],e:'BB or DB 5–12kg',s:'3×10',d:'External rotation to overhead press. Full rotator cuff through complete range.'},
+      {n:'PNF D1/D2 Shoulder Diagonals',t:['pnf','weighted'],e:'DB 5–10kg / resistance band',s:'3×8 each pattern',d:'Chopping and lifting diagonal patterns. Proprioceptive neuromuscular facilitation.'},
+      {n:'Deltoid Fascial Scraping',t:['fascia'],e:'Gua sha tool / barbell knurling',s:'60–90s each zone',d:'Scrape deltoid, pec, and infraspinatus fascia in multiple directions. Myofascial adhesion work.'},
+      {n:'Internal Rotation ISO (90/90)',t:['iso'],e:'Resistance band + wall',s:'3×20s each side',d:'Arm at 90° abduction, press forearm forward into band isometrically. Subscapularis strengthening.'},
+      {n:'Shoulder Circumduction Pendulum (Loaded)',t:['mob'],e:'DB 3–8kg hanging from hand',s:'3×30s each direction',d:'Lean forward, let arm hang, make circles with gravity. Decompresses glenohumeral under light traction.'},
+    ]
+  },
+  {
+    id:'chest', day:'upper', name:'Chest & Pectorals — Pec Major, Pec Minor, Serratus',
+    info:'Fascia: Pectoral fascia connects to deep cervical fascia and abdominal fascia. Pec minor restrictions affect shoulder internal rotation and cervical posture. Must train 3 fiber angles.',
+    exercises:[
+      {n:'Chest Opener on Foam Roller',t:['fascia','stretch'],e:'BW / WB 2–5kg on chest',s:'2×60–90s',d:'Lie lengthwise on roller, arms out in T. WB adds gentle anterior chest fascial load.'},
+      {n:'DB Chest Fly Stretch at End Range',t:['weighted','stretch'],e:'DB 5–12kg',s:'2×45s at bottom',d:'Dumbbell flat fly, hold at maximum stretch. Passively loads pec fascia eccentrically.'},
+      {n:'Pec Minor Doorway Stretch (3 angles)',t:['stretch'],e:'BW',s:'2×45s × 3 angles',d:'Low (hand low), mid (shoulder height), high (arm up). Different fiber angles of pec minor and major.'},
+      {n:'Serratus Anterior Bear Crawl ISO',t:['iso'],e:'BW',s:'3×30s',d:"All-fours, push floor away actively rounding upper back. Isometric serratus load — 'punch the ceiling'."},
+      {n:'Pec ISO Squeeze (Wall Press)',t:['iso'],e:'BW — wall',s:'3× 10s on / 5s off × 5 reps',d:'Press palm into wall at 90°. Maximum isometric pec contraction, then relax and stretch further.'},
+      {n:'WB Chest Pass Loaded Stretch',t:['weighted','mob'],e:'Medicine Ball 4–6kg',s:'3×12',d:'Catch at chest allowing ball to pull chest open, throw. Elastic pec loading.'},
+      {n:'Deep Pec Minor Release (Ball)',t:['fascia'],e:'Lacrosse ball between pec minor and wall',s:'2×60s each side',d:'Ball on pec minor below clavicle, move arm through ER/flexion while compressing. Deep myofascial.'},
+      {n:'Cable Crossover Stretch Hold',t:['weighted','stretch'],e:'Cable machine or heavy bands',s:'3×15 + 10s hold at stretch',d:'Arms open wide at cable crossover position, hold end-range stretch. Loads entire pec fascial sheet.'},
+    ]
+  },
+  {
+    id:'thoracic', day:'upper', name:'Thoracic Spine & Upper Back — T1–T12, Rhomboids, Traps',
+    info:'Joints: T1–T12 thoracic facets, rib-vertebral joints, costovertebral joints. Fascia: Thoracolumbar fascia (superficial layer), rhomboid fascia. CRITICAL — thoracic restriction drives shoulder, neck and lower-back dysfunction.',
+    exercises:[
+      {n:'Thoracic Extension on Foam Roller',t:['mob','weighted','fascia'],e:'Foam roller + WB 5–10kg at chest',s:'Segment by segment — 2×60s per zone',d:'Roll T1–T12, extend over roller at each segment. WB adds anterior load to open thoracic extension.'},
+      {n:'Thoracic Rotation with Weight Plate',t:['weighted','mob'],e:'WP 5–10kg held at chest',s:'3×12 each side',d:'Sit cross-legged or in chair, rotate maximally. Plate adds rotational inertia and end-range load.'},
+      {n:'Thread the Needle',t:['mob','weighted'],e:'BW → WW 1–2kg on top arm',s:'3×10 each side',d:'All-fours, reach one arm under body. Wrist weight adds end-range thoracic rotation stretch.'},
+      {n:'Open Book Stretch',t:['mob','stretch'],e:'BW → WW 1–2kg on top arm',s:'3×12 each side',d:'Side-lying, top arm opens like book. Wrist weight pulls arm further for deeper chest and thoracic opening.'},
+      {n:'Quadruped Thoracic Rotation',t:['mob'],e:'BW',s:'3×12 each side',d:'Hand behind head, rotate elbow to ceiling. Isolates thoracic from lumbar.'},
+      {n:'Cat-Cow with Plate on Back',t:['mob','weighted'],e:'WP 2–5kg on mid-back',s:'3×15 reps',d:'Standard cat-cow; plate on mid thoracic reinforces extension in the extension phase.'},
+      {n:'Thoracic Rotation ISO (Seated Band)',t:['iso'],e:'Resistance band anchored to side',s:'3×15s each side',d:'Rotate against band, hold isometrically. Mid-back rotators strengthening.'},
+      {n:'Rhomboid Row ISO Hold',t:['iso'],e:'DB or resistance band',s:'3×10s each rep',d:'Row to mid-position, hold 10 seconds. Rhomboid isometric strengthening between shoulder blades.'},
+      {n:'Scapular Wall Slides',t:['mob','weighted'],e:'BW / WW 0.5kg',s:'3×15',d:'Back to wall, slide arms overhead keeping scapulae against wall. Lower trap and serratus.'},
+      {n:'Thoracic Deep Fascia Release (Peanut)',t:['fascia'],e:'Double lacrosse ball taped (peanut)',s:'2×90s per segment T1–T12',d:'Peanut on either side of spine (NOT on spinous processes). Nod and extend. Segmental fascial release.'},
+      {n:'Overhead Lat Stretch with Band',t:['stretch','weighted'],e:'Light band anchored overhead',s:'2×45s each side',d:'Arm overhead, side-bend away. Band adds distraction and fascial load through lat into thoracolumbar fascia.'},
+      {n:'Banded Good Morning (Thoracic Focus)',t:['weighted','mob'],e:'Light-medium band across upper back',s:'3×12',d:'Hip hinge; band across upper back loads thoracic extension under eccentric load.'},
+      {n:'Rib Grab Thoracic Rotation',t:['mob'],e:'BW — hands grab opposite rib',s:'3×10 each side',d:'Seated, grab rib cage, use it as a lever to rotate the thoracic further. Deep facet joint mobility.'},
+    ]
+  },
+  {
+    id:'lats', day:'upper', name:'Lats & Teres Major',
+    info:'Fascia: Thoracolumbar fascia (deep layer). Lat tightness restricts shoulder flexion and thoracic extension. Fascial line runs from armpit through thoracolumbar fascia into gluteus maximus.',
+    exercises:[
+      {n:'Lat Dead Hang (Belt Weighted)',t:['weighted','stretch'],e:'BW → weight belt 5–20kg',s:'3×30–60s',d:'Dead hang from pull-up bar. Belt weight adds spinal traction and lat fascial stretch. One-arm hang for unilateral bias.'},
+      {n:'Lat Stretch at Cable or Band',t:['stretch','weighted'],e:'Light-medium band or cable',s:'2×45s each side',d:'One arm overhead on cable, side-bend away. Loads entire lat length from origin to insertion.'},
+      {n:'Child\'s Pose KB Reach',t:['stretch','weighted'],e:'KB 8–16kg',s:'2×60s each side',d:'Kneel, reach one arm to KB overhead. Weight pulls lat into stretch. Thoracolumbar junction.'},
+      {n:'Lat CAR (End-Range Overhead)',t:['mob','weighted'],e:'DB 2–5kg',s:'3×8 each arm',d:'From overhead flexion, slowly rotate and extend arm down. DB loads end range of lat contraction.'},
+      {n:'Lat ISO (Cable Row Hold at Stretch)',t:['iso'],e:'Cable or resistance band',s:'3×15s hold at full stretch',d:'At top of pulldown or row, hold the stretched position isometrically. Eccentric-isometric.'},
+      {n:'Foam Roll Lats (Axilla to Mid-Thorax)',t:['fascia'],e:'Foam roller',s:'60–90s each side',d:'Side-lying, roller in axilla area. Roll from armpit to mid-thoracic. Lat and teres fascial release.'},
+      {n:'Lat Stretch with Overhead Grip (Bar)',t:['stretch'],e:'Pull-up bar — BW',s:'2×45s each side',d:'Grip bar, let one side lengthen by side-bending and rotating slightly. Gravity decompresses.'},
+    ]
+  },
+  {
+    id:'biceps', day:'upper', name:'Biceps, Elbow Flexors & Elbow Joint',
+    info:'Joints: Humeroulnar (hinge), humeroradial, proximal radioulnar. Fascia: Bicipital aponeurosis, brachial fascia. Elbow mobility is critical for all pressing and pulling. Nerve flossing addresses median and radial nerve restriction.',
+    exercises:[
+      {n:'Elbow CAR (Controlled Articular Rotation)',t:['mob'],e:'BW',s:'3×8 each direction',d:'Full flexion/extension then pronation/supination circles. Controlled articular rotation of humeroulnar and radioulnar.'},
+      {n:'Bicep Stretch at Wall',t:['stretch'],e:'BW',s:'2×45s each arm',d:'Arm behind, palm on wall, rotate body away. Stretches long head and bicipital aponeurosis.'},
+      {n:'Reverse Curl (Brachialis & Wrist Ext)',t:['weighted','mob'],e:'BB or DB 5–15kg',s:'3×12',d:'Overhand grip curl. Brachialis and forearm extensors under loaded range.'},
+      {n:'Elbow Flexion ISO at 90°, 120°, 150°',t:['iso'],e:'BW — press into wall or hand at each angle',s:'3×10s per angle',d:'Bicep isometric at three joint positions targets different portions of motor pool.'},
+      {n:'Elbow Extension ISO (Wall Overhead)',t:['iso'],e:'BW — palm presses into wall overhead',s:'3×10s × 5',d:'Overhead position, press palm into wall into extension. Tricep isometric.'},
+      {n:'Supination / Pronation with Offset DB',t:['weighted','mob'],e:'DB 1–5kg held at far end',s:'3×15 each direction each arm',d:'Elbow at 90°, rotate forearm slowly. Radioulnar joint mobility with offset load.'},
+      {n:'Elbow Brachial Fascial Release',t:['fascia'],e:'Foam roller or barbell pressed on forearm',s:'60s each area per arm',d:'Roll from elbow crease to mid-forearm. Brachial fascia decompression and compartment release.'},
+      {n:'Nerve Flossing — Ulnar / Median / Radial',t:['mob'],e:'BW',s:'2×10 each nerve each side',d:'Ulnar: elbow flex + wrist extend. Median: arm out + wrist extend. Radial: arm out + wrist flex. Neural mobility.'},
+      {n:'Bicep PNF Stretch',t:['pnf'],e:'Wall or partner',s:'5× 10s contract + 30s stretch',d:'Arm behind, press palm forward into wall (curl direction), relax, rotate body further away each cycle.'},
+    ]
+  },
+  {
+    id:'triceps', day:'upper', name:'Triceps & Posterior Upper Arm',
+    info:'Fascia: Tricep fascia, olecranon bursa, posterior capsule of elbow. Long head crosses both shoulder and elbow — it needs overhead stretching to fully lengthen.',
+    exercises:[
+      {n:'Overhead Tricep Stretch with DB',t:['weighted','stretch'],e:'DB 5–10kg',s:'2×45s each side',d:'Elbow points up, opposite hand presses it. DB adds gravity stretch to long head.'},
+      {n:'Cross-Body Tricep Stretch',t:['stretch','weighted'],e:'BW / WW 1–2kg on stretching arm',s:'2×40s each side',d:'Arm across chest, opposite hand pulls elbow. Wrist weight adds end-range load.'},
+      {n:'Tricep Pushdown ISO with Band',t:['iso'],e:'Medium resistance band anchored overhead',s:'3×15s each arm',d:'Band overhead, press down and hold at various angles. Isometric tricep.'},
+      {n:'Skull Crusher Bottom-Hold Stretch',t:['weighted','stretch'],e:'BB or DB 5–10kg',s:'3×10s hold at bottom',d:'Lower bar to forehead, pause at lowest stretch point. Eccentric tricep fascial load.'},
+      {n:'Bench Dip Bottom-Hold Stretch',t:['stretch','weighted'],e:'BW / WP on lap',s:'2×45s',d:'Dips to bottom, hold. Plate adds anterior shoulder and tricep fascial stretch.'},
+      {n:'Tricep ISO at Wall (Elbow Extension)',t:['iso'],e:'BW — back of forearm presses into wall',s:'3×10s × 5 reps',d:'Elbow at 90°, press back of forearm into wall. All three heads isometric.'},
+      {n:'Tricep Fascial Roll (Bar on Posterior Arm)',t:['fascia'],e:'Barbell on posterior upper arm',s:'60s each arm',d:'Press barbell across posterior upper arm. Cross-fibre fascial friction for tricep fascia.'},
+    ]
+  },
+  {
+    id:'forearms', day:'upper', name:'Forearms, Wrists, Hands & Fingers',
+    info:'Joints: Distal radioulnar, radiocarpal (wrist), MCP, PIP, DIP joints. Fascia: Palmar aponeurosis, extensor retinaculum, flexor retinaculum (carpal tunnel roof), deep forearm fascia. MOST NEGLECTED area — critical for grip-based training.',
+    exercises:[
+      {n:'Wrist Circles with DBs',t:['mob','weighted'],e:'DB 0.5–2kg each hand',s:'3×15 each direction',d:'Slow wrist circumduction loading all carpal joints and wrist capsule through full range.'},
+      {n:'Wrist CAR (Controlled Articular)',t:['mob'],e:'BW / light resistance',s:'3×12 each direction each wrist',d:'Through full available range in all planes — flexion, extension, radial and ulnar deviation.'},
+      {n:'Wrist Roller (Flexion & Extension)',t:['weighted','mob'],e:'Rope dowel + WP 1–5kg',s:'3×3 up/down each direction',d:'Roll weight up using wrist flexion, lower with extension. Classic forearm loaded mobility.'},
+      {n:'Dumbbell Wrist Curl Full Range',t:['weighted','mob'],e:'DB 5–15kg',s:'3×15',d:'Seated, wrist over knee, full flexion through extension. Slow eccentric emphasised.'},
+      {n:'Dumbbell Reverse Wrist Curl',t:['weighted','mob'],e:'DB 3–10kg',s:'3×15',d:'Overhand grip. Extensor digitorum and wrist extensor loading through range.'},
+      {n:'Wrist Flexion ISO (Wall)',t:['iso'],e:'BW — palm on wall fingers pointing down',s:'3×15–20s',d:'Press palm into wall. Isometric wrist flexors. Add elbow extension for simultaneous nerve floss.'},
+      {n:'Wrist Extension ISO (Desk Push)',t:['iso'],e:'BW — back of hand on desk push up',s:'3×15–20s',d:'Dorsal wrist presses upward into desk. Wrist extensor isometric.'},
+      {n:'Finger Extension Band',t:['weighted','mob'],e:'Rubber band around all fingers',s:'3×25 reps',d:'Spread fingers against band resistance. Rarely trained extensor digitorum.'},
+      {n:'Rice Bucket Finger Mobility',t:['weighted','mob'],e:'Rice bucket',s:'3×60s',d:'Plunge hands in, open and close fingers. Intrinsic hand muscle loaded mobility.'},
+      {n:'Farmer\'s Carry ISO Hang',t:['iso','weighted'],e:'DB or KB 20–60kg',s:'3×30–60s',d:'Hold maximum weight. Isometric grip. Develops all forearm compartments under fascial tension.'},
+      {n:'Plate Pinch ISO',t:['weighted','iso'],e:'Smooth WP 5–10kg',s:'3×30–45s',d:'Pinch plate between fingers and thumb. Loaded pinch grip. Intrinsic hand and thenar eminence.'},
+      {n:'Thumb Opposition Stretch',t:['mob','stretch'],e:'BW / therapy putty',s:'2×12 each thumb',d:'Touch thumb to each finger. Thenar fascia and thumb opposition mobility.'},
+      {n:'Palmar Fascia Ball Roll',t:['fascia'],e:'Golf ball or lacrosse ball under palm',s:'2×60s each hand per zone',d:'Roll ball across entire palm pressing firmly. Palmar aponeurosis fascial release.'},
+      {n:'Finger PNF Stretch (per joint)',t:['pnf'],e:'BW — other hand provides resistance',s:'3× 10s contract + 10s stretch per finger',d:'Resist extension, relax into stretch. Individual finger MCP/PIP/DIP joint PNF.'},
+      {n:'Supination Eccentric with Offset DB',t:['weighted','mob'],e:'DB 3–8kg held at far end',s:'3×12 each arm',d:'Pronate slowly under load, supinate back. Pronator teres and supinator eccentric.'},
+      {n:'Forearm Deep Fascia Release (Bar)',t:['fascia'],e:'Barbell knurling or foam roller',s:'60–90s per surface each arm',d:'Roll barbell along forearm flexors then extensors. Deep fascial release of multiple compartments.'},
+      {n:'Carpal Tunnel Decompression Stretch',t:['stretch'],e:'BW',s:'3×30–45s each hand',d:'Fingers pulled back, palm facing forward, elbow straight. Neural and fascial stretch of carpal tunnel.'},
+      {n:'Prayer Stretch (Wrist Flexors)',t:['stretch'],e:'BW / fingertip press on desk',s:'2×45s',d:'Palms together, lower hands toward desk, elbows out. Wrist flexor and palmar fascia.'},
+      {n:'Reverse Prayer Stretch (Extensors)',t:['stretch'],e:'BW',s:'2×45s',d:'Backs of hands together, raise hands upward. Extensor retinaculum and extensor fascial stretch.'},
+      {n:'Intrinsic Hand ISO (Therapy Putty)',t:['iso'],e:'Therapy putty — light to firm',s:'3×60s per exercise',d:'Squeeze, spread, pinch, roll. Comprehensive intrinsic hand loading isometric.'},
+      {n:'Towel Wringing (Grip & Wrist)',t:['weighted','mob'],e:'Wet towel',s:'3×30s each direction',d:'Wring towel both directions. Loads wrist rotation, forearm compartments, grip under torsional resistance.'},
+    ]
+  },
+
+  // ─── LOWER ───
+  {
+    id:'hips', day:'lower', name:'Hips — Hip Flexors, Capsule & Acetabular Mobility',
+    info:'Joints: Acetabulofemoral (ball-and-socket), SI joint. Fascia: Iliopsoas fascia, hip flexor fascia, deep hip capsular ligaments. Hip mobility underpins squatting, deadlifting, and lower-back health.',
+    exercises:[
+      {n:'Hip CAR (Controlled Articular Rotation)',t:['mob','weighted'],e:'BW → KB 4–8kg at chest',s:'3×5 each leg each direction',d:'Stand on one leg, rotate hip through maximum range. KB adds load. Lubricates hip capsule fully.'},
+      {n:'90/90 Hip Stretch with Sandbag',t:['weighted','stretch'],e:'SB 5–10kg on back thigh',s:'2×60s each side',d:'Front shin parallel, back shin perpendicular. Sandbag on rear thigh increases internal rotation range.'},
+      {n:'Weighted Pigeon Pose',t:['weighted','stretch'],e:'SB 5–15kg on glute of bent leg',s:'2×60–90s each side',d:'Pigeon stretch with load on glute to push into deeper external rotation and hip flexor stretch.'},
+      {n:'Couch Stretch (Hip Flexors) with DB',t:['stretch','weighted'],e:'BW → DB 5–10kg at chest',s:'2×60s each side',d:'Rear foot on couch, front foot forward. DB at chest deepens lumbar extension and hip flexor stretch.'},
+      {n:'Kneeling Hip Flexor + Side Bend (KB)',t:['weighted','stretch'],e:'KB 3–8kg overhead same side',s:'2×45s each side',d:'Hip flexor lunge plus lateral bend. KB overhead opens psoas and QL simultaneously.'},
+      {n:'Bulgarian Split Squat (Stretch Focus)',t:['weighted','mob'],e:'DB 8–20kg each hand',s:'3×10 slow + 2s pause at bottom',d:'Emphasise bottom depth and hip flexor stretch. DB loads throughout range.'},
+      {n:'Hip Flexion ISO (Standing Knee Hold)',t:['iso'],e:'AW 2–5kg / resistance band at knee',s:'3×20–30s each side',d:'Standing or hanging knee raise, hold at 90° hip flexion. Psoas isometric.'},
+      {n:'Hip Extension ISO (Glute Bridge Hold)',t:['iso','weighted'],e:'BB 25–60kg on hips / band',s:'3×30–45s',d:'Bridge at top, maximal glute contraction. Loaded isometric hip extensors at full end range.'},
+      {n:'Hip ER ISO (Clamshell Hold)',t:['iso'],e:'Resistance band above knees',s:'3×20s each side',d:'Clamshell, hold at top. Piriformis, obturator, deep hip ER isometric.'},
+      {n:'Hip IR Loaded Stretch (Seated)',t:['stretch','weighted'],e:'AW 2–5kg on same-side foot',s:'2×45s each side',d:'Sit, rotate knee inward (foot sweeps out). Ankle weight increases internal rotation torque.'},
+      {n:'Frog Stretch with WB on Sacrum',t:['stretch','weighted'],e:'WB 4–8kg on sacrum',s:'2×60–90s',d:'All-fours, knees wide, feet turned out. WB on sacrum adds load into hip ER and adductor stretch.'},
+      {n:'Hip Distraction with Band',t:['mob','fascia'],e:'Heavy resistance band around hip crease',s:'2×60s each side',d:'Band distracts femoral head from acetabulum. Rock forward/back. Joint decompression and capsule mobility.'},
+      {n:'Deep Hip Fascia Release (Lacrosse Ball)',t:['fascia'],e:'Lacrosse ball or hockey puck',s:'90s per zone each side',d:'Target piriformis, TFL, iliacus. Contract/relax to sink deeper. Fascial trigger-point work.'},
+      {n:'Psoas Fascia Release (Foam Roller Prone)',t:['fascia'],e:'Foam roller diagonally across iliacus',s:'60–90s each side',d:'Face-down, roller at iliacus/psoas attachment. Gravity compression and myofascial release.'},
+      {n:'Adductor Sumo Hold (Loaded)',t:['weighted','stretch'],e:'BB 20–60kg goblet or sumo',s:'3×30–45s at bottom',d:'Wide stance squat, hold bottom. Adductor magnus, brevis, longus under load.'},
+      {n:'Hip 90/90 Active Rotation',t:['mob'],e:'BW',s:'3×10 each side',d:'Sit in 90/90, actively rotate front leg to rear position and back. Active hip IR/ER mobility.'},
+    ]
+  },
+  {
+    id:'glutes', day:'lower', name:'Glutes — Glute Max, Medius, Minimus, Piriformis',
+    info:'Fascia: Gluteal fascia connects to TFL and IT band laterally, and to sacrotuberous ligament posteriorly. Glute weakness is the primary driver of knee valgus and lower-back dysfunction.',
+    exercises:[
+      {n:'Glute Stretch Figure-4 / Pigeon',t:['stretch','weighted'],e:'BW / SB 5–10kg on glute',s:'2×60s each side',d:'Maximal stretch for glute max and piriformis. Sandbag deepens external rotation range.'},
+      {n:'Standing Hip Abduction with KB',t:['weighted','mob'],e:'KB 8–16kg (ipsilateral hand)',s:'3×15 each side',d:'Abduct leg to side; KB challenges glute med under load while simultaneously stretching adductors.'},
+      {n:'Banded Hip Abduction ISO',t:['iso'],e:'Heavy resistance band above knees',s:'3×30s',d:'Side-lying or standing. Sustained isometric glute medius hold.'},
+      {n:'Single-Leg Hip Thrust ISO Hold',t:['iso','weighted'],e:'BB 40–100kg',s:'3×15s iso hold at top',d:'Full glute max under heavy load at end range. Hold top position isometrically.'},
+      {n:'Clamshell Banded Full Range',t:['weighted','mob'],e:'Resistance band above knees',s:'3×20 each side',d:'Full range of external rotation to strengthen glute med and deep ER group.'},
+      {n:'Banded Monster Walk',t:['weighted','mob'],e:'Medium-heavy resistance band',s:'3×20 steps each direction',d:'Band resists abduction. Glute med endurance and hip stabilisation under loaded walk.'},
+      {n:'Glute Foam Roll (Gluteal Fascia)',t:['fascia'],e:'Foam roller / trigger point roller',s:'90s each glute',d:'Roll sacrum to mid-glute. Cross-fibre friction at gluteal fascia. Target piriformis trigger points.'},
+      {n:'Seated Piriformis Stretch with DB',t:['stretch','weighted'],e:'DB 5–10kg on crossed knee',s:'2×45s each side',d:'Figure-4 seated, DB on knee. Weight deepens piriformis stretch.'},
+      {n:'Glute Medius Wall Push ISO',t:['iso'],e:'BW — hip against wall',s:'3×20–30s each side',d:'Stand sideways to wall, push hip into wall (abduction). Isometric glute medius hold.'},
+      {n:'Donkey Kick with Ankle Weight',t:['weighted','mob'],e:'AW 2–5kg',s:'3×15 each side',d:'All-fours, kick heel to ceiling. Ankle weight loads glute max through full hip extension range.'},
+    ]
+  },
+  {
+    id:'quads', day:'lower', name:'Quadriceps & Knee Joint',
+    info:'Joints: Tibiofemoral (knee hinge), patellofemoral, proximal tibiofibular. Fascia: Quadriceps fascia, patellar tendon, IT band, retinaculum. Knee mobility requires both joint mobility and surrounding fascial release.',
+    exercises:[
+      {n:'Knee CAR (Controlled Articular)',t:['mob'],e:'BW',s:'3×8 each leg each direction',d:'Stand on one leg, bend/straighten and rotate knee through full available range. Small circles at various flexion angles.'},
+      {n:'Weighted Knee Flexion Stretch (Dragon Pose)',t:['weighted','stretch'],e:'SB 5–10kg on rear glute',s:'2×90s each side',d:'Extreme hip flexor lunge, rear knee on ground. Sandbag deepens rectus femoris and capsule stretch.'},
+      {n:'Nordic Quad Stretch (Heel Sit Recline)',t:['stretch','weighted'],e:'BW → WP 5–10kg at chest',s:'3×10s hold at bottom',d:'Sit on heels, recline backward. Plate adds load. Vastus intermedius and rectus fascia maximal stretch.'},
+      {n:'Terminal Knee Extension ISO (Band)',t:['iso'],e:'Medium resistance band behind knee',s:'3×15 each side × 10s each',d:'Band pulls knee into flexion; squeeze to full extension. VMO isometric — critical for patellar tracking.'},
+      {n:'Spanish Squat (Patella Tendon Load)',t:['iso','weighted'],e:'BW → resistance band around rack',s:'3×30–45s',d:'Shins vertical, sit into deep knee flexion. Band holds knees in. Isometric patella tendon and VMO.'},
+      {n:'Step-Down Eccentric ISO',t:['weighted','mob'],e:'BW / DB 5–10kg each hand',s:'3×10 each side — 5s down',d:'Step-down off box with 5-second eccentric. Patella tendon loading and VMO activation.'},
+      {n:'Quad Foam Roll (Deep Fascia)',t:['fascia'],e:'Foam roller + extra hand pressure',s:'90s each quad — 3 zones',d:'Prone on roller, roll hip to knee. Extra hand pressure deepens quad fascial release.'},
+      {n:'Rectus Femoris Stretch Prone (Ankle Weight)',t:['stretch','weighted'],e:'AW 2–5kg',s:'2×60s each side',d:'Prone, pull heel to glute. Ankle weight adds traction from knee on rectus femoris.'},
+      {n:'VL Cross-Fibre Bar Release',t:['fascia'],e:'Barbell or dowel pressed perpendicular across VL',s:'60–90s each leg',d:'Side-lying, bar pressed perpendicular across outer quad. Cross-fibre fascial friction.'},
+      {n:'Patellar Mobilisation (Manual)',t:['mob'],e:'BW — fingertips',s:'2×30s each direction',d:'Manually glide kneecap up/down and medial/lateral. Improves patellofemoral tracking and retinaculum.'},
+      {n:'Knee Flexion ISO (Hamstring Curl Hold)',t:['iso'],e:'AW 2–8kg / band at ankle',s:'3×20–30s each side',d:'Standing knee curl, hold at 90°. Hamstring isometric at knee joint.'},
+      {n:'Sissy Squat (Anterior Knee Capsule)',t:['weighted','mob'],e:'BW → WP 5–10kg at chest',s:'3×10',d:'Deep anterior knee stretch. Loads anterior knee capsule and quad fascia.'},
+      {n:'Knee Tibiofemoral Distraction (Band)',t:['mob','fascia'],e:'Heavy band around proximal tibia, anchored',s:'2×60s each side',d:'Band distracts tibiofemoral joint medially or laterally. Capsule and meniscal decompression.'},
+      {n:'Quad PNF (Prone)',t:['pnf'],e:'Strap or partner holding ankle',s:'5× 10s press + 30s stretch',d:'Press foot away from glute into strap, relax, pull heel further to glute each cycle.'},
+    ]
+  },
+  {
+    id:'hamstrings', day:'lower', name:'Hamstrings — Biceps Femoris, Semimembranosus, Semitendinosus',
+    info:'Fascia: Hamstring fascia connects to sacrotuberous ligament, deep gluteal fascia, and popliteal fascia. Restriction drives anterior pelvic tilt and lower back pain. Eccentric strength is paramount.',
+    exercises:[
+      {n:'Romanian Deadlift (Deep Stretch Focus)',t:['weighted','stretch'],e:'BB or DB 40–100kg',s:'3×10 — pause 2s at bottom',d:'Hip-hinge to maximal hamstring length. Eccentric load through full fascial posterior chain.'},
+      {n:'Nordic Hamstring Curl with Vest',t:['weighted','mob'],e:'BW → weighted vest',s:'3×6 slow eccentrics',d:'Gold standard for hamstring eccentric strength. Critical injury prevention exercise.'},
+      {n:'Single-Leg RDL ISO Hold',t:['iso','weighted'],e:'KB 12–24kg',s:'3×20–30s each side',d:'Balance in RDL position. Isometric hamstring and hip extension under load.'},
+      {n:'Standing Hamstring Stretch with Band',t:['stretch'],e:'Resistance band under foot held overhead',s:'2×45s each side',d:'Band adds end-range hamstring load. Active tension through PNF mechanism.'},
+      {n:'Elevated Hamstring Stretch with DB',t:['stretch','weighted'],e:'DB 5–10kg at chest',s:'2×60s each leg',d:'Foot elevated at hip height, hinge forward. DB deepens stretch through added thoracic flexion.'},
+      {n:'Good Morning (Loaded Eccentric)',t:['weighted','mob'],e:'BB 20–60kg',s:'3×12',d:'Hip hinge with bar on back. Loaded hamstring eccentric through full range.'},
+      {n:'Hamstring PNF (Supine)',t:['pnf'],e:'BW — strap or partner',s:'5× 10s contract + 30s stretch',d:'Leg up, press into strap 10s, then push further into hip flexion each cycle.'},
+      {n:'Hamstring Fascial Roll (Cross-Fibre)',t:['fascia'],e:'Foam roller or massage bar',s:'90s–2 min each leg',d:'Cross-fibre friction perpendicular to hamstring fibres. Focus on glute-hamstring junction.'},
+      {n:'Suitcase Deadlift (Lateral Hamstring)',t:['weighted','mob'],e:'KB 16–40kg',s:'3×10 each side',d:'KB held at side. Lateral hamstring and IT-band fascial chain under lateral load.'},
+      {n:'Glute-Ham Raise (Eccentric)',t:['weighted','mob'],e:'BW → add weight vest',s:'3×6',d:'Controlled eccentric from top to bottom. Lengthens all three hamstrings under maximal eccentric.'},
+    ]
+  },
+  {
+    id:'adductors', day:'lower', name:'Adductors & Groin — Adductor Magnus, Longus, Brevis, Gracilis, Pectineus',
+    info:'Fascia: Adductor fascia blends with deep fascia of the thigh and obturator fascia. These muscles are often tight in athletes, limiting squat depth and hip external rotation.',
+    exercises:[
+      {n:'Copenhagen Adductor Plank with Ankle Weight',t:['iso','weighted'],e:'BW → AW 2–5kg',s:'3×20–30s each side',d:'Side plank, top leg on bench. Isometric and dynamic adductor under bodyweight and load.'},
+      {n:'Sumo Squat Deep Hold (Loaded)',t:['weighted','stretch'],e:'BB 40–80kg or KB/DB goblet 20–40kg',s:'3×45–60s at bottom',d:'Wide stance deep knee bend, hold at bottom. Adductor magnus and brevis loaded stretch.'},
+      {n:'Lateral Lunge (Deep) with KB',t:['weighted','mob'],e:'KB 12–24kg goblet',s:'3×10 each side + 5s hold',d:'Maximum lateral lunge depth. Pause at bottom. Adductor longus and gracilis full range.'},
+      {n:'Seated Butterfly Stretch with WB',t:['stretch','weighted'],e:'WB 5–10kg / manual press on knees',s:'2×60–90s',d:'Soles together, push knees down with weight. Pectineus and adductor brevis.'},
+      {n:'Adductor ISO Ball Squeeze',t:['iso'],e:'Medicine ball 3–6kg between thighs',s:'3×30s',d:'Lying or seated, squeeze ball maximally. Isometric adductor loading all five muscles.'},
+      {n:'Cossack Squat with KB',t:['weighted','mob'],e:'KB 8–24kg goblet',s:'3×10 each side + 5s hold',d:'Deep lateral squat. Comprehensive adductor through full functional range.'},
+      {n:'Adductor Fascial Roll (Inner Thigh)',t:['fascia'],e:'Foam roller pressed into medial thigh',s:'90s each leg',d:'Roll adductor longus from groin to knee. Cross-friction at fascial adhesions.'},
+      {n:'Standing Groin Stretch with Ankle Weight',t:['stretch','weighted'],e:'AW 2–5kg',s:'2×45s each side',d:'Leg out to side on chair, ankle weight pulls leg further into abduction.'},
+      {n:'Adductor PNF (Supine)',t:['pnf'],e:'Strap or partner at inner thigh',s:'5× 10s squeeze + 30s open',d:'Press knees up against strap resistance, relax, allow knees to fall further each cycle.'},
+    ]
+  },
+  {
+    id:'itband', day:'lower', name:'IT Band, TFL & Lateral Fascial Line',
+    info:'The IT band is a fascial structure — you cannot stretch it directly. Influence it through TFL origin work, glute med strengthening, and lateral fascial line loading. Cross-fibre compression at TFL is most effective.',
+    exercises:[
+      {n:'TFL Stretch (Standing Cross-Leg)',t:['stretch','weighted'],e:'BW / DB 2–5kg opposite hand',s:'2×60s each side',d:'Cross back leg behind, lean to opposite side. DB opposite hand adds side-bend depth.'},
+      {n:'Lateral Fascial Line Foam Roll',t:['fascia'],e:'Foam roller / deep tissue roller',s:'2–3 min per side',d:'Roll from outer ankle up calf, peroneal, outer knee, ITB, TFL. DO NOT compress ITB if inflamed — focus on TFL.'},
+      {n:'Lateral Band Walk (TFL & Glute Med)',t:['weighted','mob'],e:'Medium-heavy resistance band above knees',s:'3×20 steps each way',d:'Band resists abduction. TFL and glute med strength. Dynamic lateral fascial line loading.'},
+      {n:'Standing TFL ISO (Wall Push)',t:['iso'],e:'BW — hip pressed into wall',s:'3×20–30s each side',d:'Push hip into wall (abduction), hold. Isometric TFL.'},
+      {n:'Lateral Squat Drop (Fascial Spring)',t:['weighted','mob'],e:'BW → AW 1–2kg',s:'3×10 each side',d:'Lateral step and squat, elastic rebound. Trains lateral fascial spring mechanism.'},
+      {n:'TFL Cross-Fibre Ball Release',t:['fascia'],e:'Lacrosse ball on TFL (hip pocket area)',s:'90s each side',d:'Side-lying on ball at TFL origin. Compress and circle. Most effective IT band approach.'},
+    ]
+  },
+  {
+    id:'calves', day:'lower', name:'Calves, Achilles & Ankle — Full Weighted Mobility',
+    info:'Joints: Talocrural (ankle mortise), subtalar (inversion/eversion), midtarsal. Fascia: Achilles tendon sheath, crural fascia, peroneal retinaculum. Ankle mobility is the FOUNDATION of all lower-body movement.',
+    exercises:[
+      {n:'Ankle CAR with Ankle Weight',t:['mob','weighted'],e:'BW → AW 1–3kg',s:'3×10 each direction each ankle',d:'Seated or standing, rotate ankle through FULL range: DF, PF, inversion, eversion, circumduction. AW loads end range.'},
+      {n:'Weighted Ankle Dorsiflexion Lunge (Wall)',t:['weighted','mob'],e:'KB 5–10kg at chest / AW 2–5kg',s:'3×12 each side + 5s hold at end range',d:'Drive knee over little toe toward wall. KB increases dorsiflexion demand. Critical pre-squat drill.'},
+      {n:'Ankle Dorsiflexion ISO (Box Edge)',t:['iso','weighted'],e:'WP at chest on box edge — heels hanging',s:'3×30–45s',d:'Maximum dorsiflexion under load. Also lengthens Achilles tendon under axial compression.'},
+      {n:'Ankle Plantarflexion ISO (Calf Raise Hold)',t:['iso','weighted'],e:'BB 40–100kg / standing calf machine',s:'3×20–30s hold at top',d:'Maximum plantarflexion with load. Develops end-range strength and tendon stiffness.'},
+      {n:'Bent-Knee Calf Raise — Soleus Heavy Slow',t:['weighted','mob'],e:'BB 20–60kg / seated calf machine',s:'3×15 — 3s up / 2s hold / 3s down',d:'Bent knee isolates soleus and Achilles insertion. HSR (heavy slow resistance) protocol.'},
+      {n:'Tibia Raise with Ankle Weight',t:['weighted','mob'],e:'AW 2–5kg',s:'3×20 each foot',d:'Heels on ground, lift forefoot. Trains tibialis anterior through full dorsiflexion range.'},
+      {n:'Eversion Resistance with Band',t:['weighted','mob'],e:'Light band around forefoot, anchored inside',s:'3×15 each side',d:'Evert foot against band. Peroneus longus and brevis loaded mobility.'},
+      {n:'Inversion Resistance with Band',t:['weighted','mob'],e:'Light band around forefoot, anchored outside',s:'3×15 each side',d:'Invert foot against band. Tibialis posterior and deep ankle stabilisers.'},
+      {n:'Ankle Alphabet with Ankle Weight',t:['mob','weighted'],e:'AW 1–3kg',s:'2× full alphabet each ankle',d:'Write A–Z with big toe. Comprehensive multi-plane ankle mobility under load.'},
+      {n:'Single-Leg Balance (AW + Wobble Board)',t:['weighted','iso'],e:'AW 1–3kg + wobble board or BOSU',s:'3×45s each side',d:'Challenges all ankle stabiliser muscles and proprioception under load.'},
+      {n:'Achilles HSR — Heavy Slow Resistance',t:['weighted','iso'],e:'Loaded calf raise machine or barbell',s:'3×15 — 3s up / 2s hold / 3s down',d:'Gold standard for Achilles tendinopathy and tendon stiffening. Cadence is critical.'},
+      {n:'Ankle Distraction with Band',t:['mob','fascia'],e:'Heavy band around ankle crease, anchored',s:'2×60s each side',d:'Distract talocrural joint while moving foot into dorsiflexion and circles. Decompresses joint.'},
+      {n:'Peroneal Nerve Floss',t:['mob'],e:'BW',s:'2×15 each side',d:'Invert foot + extend knee + laterally flex neck toward same side. Neural mobility peroneal nerve.'},
+      {n:'Achilles Tendon Sheath Fascial Release',t:['fascia'],e:'Barbell or massage stick across Achilles',s:'60–90s each side',d:'Press across tendon transversely. Fascial adhesion between tendon sheath and crural fascia.'},
+      {n:'Plantarflexion Stretch (Foot Under Body)',t:['stretch','weighted'],e:'BW / SB 5–10kg on lap',s:'2×60s each side',d:'Sit on heels. Sandbag adds compression and deepens plantarflexion stretch.'},
+      {n:'Ankle Dorsiflexion PNF',t:['pnf'],e:'Resistance band under foot',s:'5× 10s plantarflex + 30s dorsiflex',d:'Actively plantarflex against band, relax, pull into dorsiflexion. Each cycle gains 1–2° of range.'},
+    ]
+  },
+  {
+    id:'shins', day:'lower', name:'Shins — Tibialis Anterior, Peroneal Muscles',
+    info:'Fascia: Anterior compartment fascia, peroneal compartment fascia. Shin splints often reflect compartment syndrome from fascial restriction. Cross-fibre release lateral to tibia is key.',
+    exercises:[
+      {n:'Tibialis Anterior Stretch',t:['stretch','weighted'],e:'BW / AW 1–2kg',s:'2×45s each side',d:'Foot pointed back, top of foot on ground, sit toward heels.'},
+      {n:'Tib Raise with Ankle Weight',t:['weighted','mob'],e:'AW 2–5kg',s:'3×20–25 each foot',d:'Stand heels on ground, lift forefoot. Shin splint prevention and tibialis anterior strength.'},
+      {n:'Peroneal Resistance Walk (Band)',t:['weighted','mob'],e:'Light-medium band around feet',s:'3×20 steps each direction',d:'Walk with band pulling feet inward. Peroneal strength and compartment mobility.'},
+      {n:'Shin Peroneal Fascial Roll',t:['fascia'],e:'Foam roller or bar lateral to tibia',s:'60s each leg',d:'Roll peroneal muscles lateral to tibia. DO NOT roll directly on tibia bone.'},
+      {n:'Tibialis Anterior ISO (Band)',t:['iso'],e:'Resistance band around forefoot',s:'3×20s each side',d:'Band plantarflexes foot; dorsiflex against band, hold. Tibialis anterior isometric.'},
+    ]
+  },
+  {
+    id:'feet', day:'lower', name:'Feet & Plantar Fascia — Full Foot Protocol',
+    info:'Joints: Tarsometatarsal (Lisfranc), MTP, PIP, DIP toe joints. Fascia: Plantar fascia (thick sling from heel to toes), intrinsic foot muscle fascia. Foot stiffness propagates dysfunction up the entire kinetic chain.',
+    exercises:[
+      {n:'Towel Toe Curls (Intrinsic Load)',t:['weighted','mob'],e:'Towel + optional WP on top of towel',s:'3×20–30 reps each foot',d:'Curl towel under toes using only foot. Flexor digitorum brevis, lumbricales. Plate increases resistance.'},
+      {n:'Marble Pick-Up',t:['mob'],e:'Marbles + cup on floor',s:'2×60s each foot',d:'Fine intrinsic and toe flexor coordination. Pick marbles from floor to cup using toes.'},
+      {n:'Short Foot Exercise (Arch Dome)',t:['iso','weighted'],e:'BW → AW for balance challenge',s:'3×15–20 reps',d:'Without curling toes, dome the arch. Intrinsic foot muscle strengthening and arch control.'},
+      {n:'Toe Splay ISO',t:['iso'],e:'BW',s:'3×15s hold × 5 reps',d:'Spread all toes apart, hold. Foot abductors and interossei isometric.'},
+      {n:'Big Toe Extension ISO (Hallux)',t:['iso'],e:'BW — opposite hand resistance',s:'3×10s × 3 reps per toe',d:'Resist big toe extension. Flexor hallucis brevis and plantar fascia isometric.'},
+      {n:'Plantar Fascia Ball Roll',t:['fascia'],e:'Lacrosse ball / golf ball + bodyweight pressure',s:'90s–2 min per foot × 3 zones',d:'Heel, mid-arch, ball of foot. Hold tender points 30–45s. Plantar fascial release.'},
+      {n:'Calf Raise onto Tiptoes (MTP Load)',t:['weighted','mob'],e:'BW → loaded barbell or vest',s:'3×20',d:'Rise onto tips of toes. Loads metatarsophalangeal joints and plantar fascia under progressive load.'},
+      {n:'Toe Yoga (Big Toe Up / Others Down)',t:['mob'],e:'BW',s:'3×10 each configuration',d:'Coordination of intrinsic vs extrinsic foot muscles. Independent toe control.'},
+      {n:'Foot Inversion and Eversion with Band',t:['mob'],e:'Resistance band / towel under arch',s:'3×15 each direction',d:'Invert and evert foot against band. Subtalar joint range and strength.'},
+      {n:'Toe Extension Stretch with Strap',t:['stretch','weighted'],e:'BW / strap pulling toes back',s:'2×45s',d:'Extends all toes. Plantar fascia and toe flexor fascial stretch.'},
+      {n:'MTP Joint Bent-Toe Squat',t:['mob','weighted'],e:'BW',s:'3×10 × 5s hold',d:'Squat with toes dorsifiexed against floor. Loads MTP joints with bodyweight. Improves foot dorsiflexion.'},
+      {n:'Deep Plantar Fascia Release (Thumbs)',t:['fascia'],e:'Thumbs or barbell on plantar surface',s:'90s per fascial band per foot',d:'Deep transverse friction on three plantar fascial bands. Release adhesions segment by segment.'},
+      {n:'Foot Pronation ISO (Arch Resist)',t:['iso'],e:'BW — barefoot balance on arch',s:'3×30s each foot',d:'Actively resist pronation. Posterior tibialis and intrinsic arch muscles isometric.'},
+    ]
+  },
+  {
+    id:'lumbar', day:'lower', name:'Lumbar Spine & Lower Back — L1–L5, Multifidus, Erectors',
+    info:'Joints: L1–L5 facets, lumbosacral junction (L5/S1), SI joint. Fascia: Thoracolumbar fascia (the central fascial hub of the entire body), multifidus fascia, lumbodorsal fascia. Everything connects here.',
+    exercises:[
+      {n:'Lumbar Cat-Cow with Plate on Back',t:['mob','weighted'],e:'WP 2–5kg on mid-back',s:'3×15 reps',d:'Plate on mid-back enhances lumbar extension phase. Segmental spinal mobility.'},
+      {n:'Lumbar Rotation — Windshield Wiper with AW',t:['mob','weighted'],e:'AW 1–3kg on knees',s:'3×15 each side',d:'Supine, knees to chest, drop both to side. Ankle weights add momentum and end-range stretch.'},
+      {n:'Jefferson Curl (Spinal Flexion)',t:['weighted','mob'],e:'DB/BB 5–30kg',s:'3×8 slow reps',d:'Stand on step, roll down vertebra by vertebra holding weight. Extreme loaded spinal flexion. Start VERY light.'},
+      {n:'McKenzie Press-Up (Extension)',t:['mob'],e:'BW',s:'3×10',d:'Prone, press up with hands, let lower back sag. Lumbar extension mobility and disc rehydration.'},
+      {n:'Multifidus Bird-Dog ISO with Weights',t:['iso','weighted'],e:'DB 2–4kg in hand / AW 1–3kg on ankle',s:'3×15 each side × 3s hold',d:'Quadruped, extend opposite arm and leg. Weights load the multifidus isometrically.'},
+      {n:'Lumbar Traction Hang with Belt',t:['weighted','stretch'],e:'Pull-up bar + weight belt 10–20kg',s:'3×45s',d:'Hold bar, lower into squat, letting spine decompress. Belt weight increases traction force.'},
+      {n:'Spinal Rotation ISO (Seated Band)',t:['iso'],e:'Resistance band anchored to side at chest height',s:'3×15s each side',d:'Rotate against band, hold. Lumbar rotators and obliques isometric.'},
+      {n:'Lumbar Fascial Release (Peanut Roller)',t:['fascia'],e:'Double lacrosse ball peanut',s:'2×90s per segment L1–L5',d:'Peanut on either side of lumbar spine (NOT on spinous processes). Flex and extend over it. Segmental.'},
+      {n:'Supported Lumbar Back Bend (Roller)',t:['mob','fascia'],e:'BW — foam roller under lumbar',s:'2×60s',d:'Roller under lumbar spine. Gravity opens lumbar extension. Posterior ligament and disc fascial release.'},
+      {n:'Good Morning (Lumbar Extension Strength)',t:['weighted','mob'],e:'BB 20–60kg',s:'3×12',d:'Hip hinge with bar on back. Loads lumbar extensors and erectors eccentrically through full range.'},
+    ]
+  },
+  {
+    id:'ql', day:'lower', name:'QL — Quadratus Lumborum (Dedicated Protocol)',
+    info:'The QL is the most common driver of unilateral lower-back pain. It connects the 12th rib to the iliac crest and lumbar transverse processes. Treat it specifically — it does NOT respond to general lumbar work.',
+    exercises:[
+      {n:'QL Stretch — Side-Lying Banana with AW',t:['stretch','weighted'],e:'AW 2–5kg on top foot',s:'2×60–90s each side',d:'Lie on side in banana shape (hips forward, legs back). Ankle weight on top leg maximally elongates QL.'},
+      {n:'Standing QL Stretch with KB Overhead',t:['weighted','stretch'],e:'KB 8–20kg overhead one hand',s:'2×45–60s each side',d:'Arm up holding KB, side-bend opposite direction. KB eccentrically loads QL under weight.'},
+      {n:'QL ISO Side Plank with Plate',t:['iso','weighted'],e:'BW → WP 5–10kg on hip',s:'3×30–45s each side',d:'Side plank at full extension. Plate on hip adds lateral compressive load. QL isometric.'},
+      {n:'Lateral Flexion DB (QL Eccentric)',t:['weighted','mob'],e:'DB 8–20kg one hand',s:'3×12 each side',d:'Side-bend toward DB slowly, return. Eccentric QL lengthening under controlled load.'},
+      {n:'QL Deep Fascial Ball Release',t:['fascia'],e:'Lacrosse ball / trigger point ball on floor',s:'2×90s each side',d:'Ball between hip crest and bottom rib, slightly behind midline. Contract/relax and breathe deep. Most direct QL fascial release.'},
+      {n:'QL Roller Release (Side-Lying)',t:['fascia'],e:'Foam roller placed under waist',s:'60–90s each side',d:'Side-lying, roller under waist at QL position. Gravity compresses and releases QL fascia.'},
+      {n:'QL Traction Hang with Ankle Weights',t:['weighted','stretch'],e:'Pull-up bar + AW 2–10kg',s:'3×30–45s',d:'Dead hang from bar. Spinal decompression and QL traction under gravity and ankle weight load.'},
+      {n:'QL PNF (Side Bend)',t:['pnf'],e:'Wall or partner',s:'5× 10s push + 30s stretch',d:'Side-bend, press waist into wall (QL contraction), relax and stretch further each cycle.'},
+    ]
+  },
+  {
+    id:'core', day:'lower', name:'Abs, Core & Deep Stabilisers',
+    info:'Muscles: Transversus abdominis (TVA), internal/external obliques, rectus abdominis, diaphragm, pelvic floor. Fascia: Linea alba, rectus sheath, thoracolumbar fascia anterior layer. Core mobility = ability to control all spinal ranges under load.',
+    exercises:[
+      {n:'Diaphragmatic Breathing ISO with Sandbag',t:['iso'],e:'SB 2–5kg on belly',s:'5 min — 5s inhale / 5s exhale',d:'Sandbag provides diaphragm resistance. TVA activation. Foundation of all core work.'},
+      {n:'Dead Bug with DB and Ankle Weights',t:['weighted','iso'],e:'DB 2–5kg in hands + AW 1–2kg',s:'3×10 each side',d:'Opposite arm/leg lower simultaneously. Anti-extension isometric for TVA and rectus under load.'},
+      {n:'Pallof Press ISO',t:['iso'],e:'Medium-heavy cable / resistance band at chest height',s:'3×20–30s each side',d:'Press cable away from anchor, hold. Anti-rotation isometric for obliques and TVA.'},
+      {n:'Ab Wheel Full Extension Rollout',t:['weighted','mob'],e:'Ab wheel (BW → + AW)',s:'3×8–12',d:'Full extension rollout. Maximum anti-extension load for rectus and TVA.'},
+      {n:'Hollow Body Hold with Weight Overhead',t:['iso','weighted'],e:'BW → WP 2–5kg overhead',s:'3×20–45s',d:'Lumbar pressed to floor, arms and legs hovering. Plate overhead increases lever arm.'},
+      {n:'Side Plank Hip Dip with Plate',t:['iso','weighted'],e:'BW → WP 10–20kg on hip',s:'3×12 dips + 20s hold',d:'Lower hip to floor and raise. Plate on hip loads obliques dynamically and isometrically.'},
+      {n:'Dragon Flag (Eccentric Only)',t:['mob'],e:'BW — bench needed',s:'3×5 slow eccentrics',d:'Brace everything, lower body slowly. Extreme anti-flexion for entire anterior core.'},
+      {n:'Weighted Crunch Full Range',t:['weighted','mob'],e:'WP 5–20kg at chest / cable overhead',s:'3×15',d:'Full range — stretch at bottom, crunch at top. Rectus abdominis under load through complete motion.'},
+      {n:'Oblique Cable Crunch',t:['weighted','mob'],e:'Cable / resistance band from above',s:'3×15 each side',d:'Kneel, pull cable diagonally. External and internal obliques under loaded range.'},
+      {n:'Ab Stretch on Swiss Ball',t:['stretch','weighted'],e:'BW / WP 2–5kg overhead on Swiss ball',s:'2×45s',d:'Lie back on Swiss ball. Plate overhead deepens stretch. Full rectus and linea alba stretch.'},
+      {n:'Reverse Crunch ISO with Ankle Weights',t:['iso','weighted'],e:'AW 2–5kg / band at ankles',s:'3×10s hold at top',d:'Bring hips to ceiling, hold. Lower rectus and hip flexor isometric under load.'},
+      {n:'Plank / RKC Plank with Weighted Vest',t:['iso','weighted'],e:'BW → weight vest 5–20kg',s:'3×30–60s',d:"RKC plank: squeeze everything maximally. Vest adds load. Full TVA, rectus, oblique co-contraction."},
+      {n:'Suitcase Carry (Anti-Lateral Flexion)',t:['weighted','iso'],e:'KB or DB 20–50kg one side',s:'3×30–45s each side',d:'Walk with weight one-side only. Anti-lateral flexion core under loaded movement.'},
+      {n:'Diaphragm Fascial Release (Sub-Costal)',t:['fascia'],e:'Fingers under lower ribs while breathing',s:'60s each side',d:'Gentle compression under costal arch while breathing into area. Diaphragm fascia and psoas release.'},
+      {n:'TVA ISO — Abdominal Vacuum',t:['iso'],e:'BW',s:'3×10s hold × 5 reps',d:'Exhale fully, pull navel to spine, hold. Deep TVA isolation — the most direct core isometric.'},
+      {n:'Ab Stretch (Prone Cobra)',t:['mob'],e:'BW → light plate on mid-back',s:'3×30s',d:'Prone, arms at sides, lift chest. Gentle lumbar extension and anterior abdominal fascial stretch.'},
+    ]
+  },
+];
+
+const pnfData=[
+  {n:'Hamstring PNF',e:'Strap or partner',s:'5× 10s contract + 30s stretch',d:'Leg up. Press leg into strap, then push further into hip flexion each cycle.'},
+  {n:'Hip Flexor PNF (Couch Stretch)',e:'BW / wall',s:'5× 10s squeeze + 30s into stretch',d:'Squeeze glute and rear quad, relax and sink deeper each cycle.'},
+  {n:'Adductor PNF (Butterfly)',e:'Partner or strap at inner thigh',s:'5× 10s squeeze + 30s open',d:'Press knees up against strap, relax and allow knees to fall further.'},
+  {n:'Shoulder ER/IR PNF',e:'Partner or strap',s:'5× 10s press + 30s passive',d:'Arm at 90°. Press forearm into resistance, relax into passive range.'},
+  {n:'Calf / Achilles PNF',e:'Strap around foot (leg straight)',s:'5× 10s plantarflex + 30s dorsiflex',d:'Actively plantarflex against strap, relax, then pull into dorsiflexion.'},
+  {n:'Pec PNF (Doorway)',e:'Doorframe',s:'5× 10s press + 30s open',d:'Press forearm into doorframe (adduction), relax and allow chest to open.'},
+  {n:'Neck Lateral Flexion PNF',e:'Hand',s:'5× 10s push + 30s stretch each side',d:'Press head into hand resistance, relax, ear drops further toward shoulder.'},
+  {n:'Hip ER (Piriformis) PNF',e:'Partner or strap',s:'5× 10s press + 30s stretch',d:'Figure-4. Press knee up against resistance. Relax and allow hip to open.'},
+  {n:'Ankle Dorsiflexion PNF',e:'Band or strap under foot',s:'5× 10s plantarflex + 30s DF',d:'Each cycle should gain 1–2° of dorsiflexion range.'},
+  {n:'QL Lateral Bend PNF',e:'Wall or partner',s:'5× 10s push + 30s stretch',d:'Side-bend, press waist into wall, relax and stretch further each cycle.'},
+  {n:'Quad PNF (Prone)',e:'Strap or partner at ankle',s:'5× 10s press away + 30s heel to glute',d:'Press foot away from glute into strap, relax, pull heel further each cycle.'},
+  {n:'Finger Joint PNF (per finger)',e:'BW — opposite hand resistance',s:'3× 10s + 10s per finger',d:'Resist extension, relax into stretch. Individual MCP, PIP, DIP joint PNF.'},
+];
+
+// ═══ RENDER ═══
+const typeMap={mob:'MOB',weighted:'WGT',iso:'ISO',fascia:'FASCIA',pnf:'PNF',stretch:'STRETCH'};
+const clsMap={mob:'b-mob',weighted:'b-weighted',iso:'b-iso',fascia:'b-fascia',pnf:'b-pnf',stretch:'b-stretch'};
+
+function badges(types,day){
+  let h=`<span class="badge ${day==='upper'?'b-upper':'b-lower'}">${day.toUpperCase()}</span>`;
+  types.forEach(t=>{h+=`<span class="badge ${clsMap[t]||''}">${typeMap[t]||t}</span>`});
+  return h;
+}
+
+const mainU=document.getElementById('main-upper');
+const mainL=document.getElementById('main-lower');
+let totalEx=0;
+let upperEx=0, lowerEx=0;
+
+bodyParts.forEach(bp=>{
+  const section=document.createElement('div');
+  section.className='bp-section';
+  section.dataset.day=bp.day;
+  section.dataset.id=bp.id;
+
+  let exHtml='';
+  bp.exercises.forEach(ex=>{
+    const types=ex.t.join(' ');
+    const search=(ex.n+' '+bp.name+' '+ex.e+' '+ex.d+' '+ex.t.join(' ')+' '+bp.day).toLowerCase();
+    exHtml+=`<div class="ex-card" data-day="${bp.day}" data-types="${types}" data-search="${search}">
+      <div class="ex-top">
+        <div class="badges">${badges(ex.t,bp.day)}</div>
+        <div class="ex-name">${ex.n}</div>
+        <div class="ex-part">${bp.name}</div>
+      </div>
+      <div class="ex-bottom">
+        <div class="ex-row"><span class="ex-lbl">Equipment</span><span class="ex-equip">${ex.e}</span></div>
+        <div class="ex-row"><span class="ex-lbl">Protocol</span><span class="ex-sets">${ex.s}</span></div>
+        <div class="ex-note">${ex.d}</div>
+      </div>
+    </div>`;
+  });
+
+  const count=bp.exercises.length;
+  totalEx+=count;
+  if(bp.day==='upper') upperEx+=count;
+  else lowerEx+=count;
+
+  section.innerHTML=`
+    <div class="bp-header" onclick="toggleSection(this)">
+      <span class="bp-day-dot ${bp.day}"></span>
+      <span class="bp-name">${bp.name}</span>
+      <span class="bp-meta bp-count ${bp.day}">${count} exercises</span>
+      <span class="bp-arrow">▾</span>
+    </div>
+    <div class="bp-body">
+      <div class="bp-info">${bp.info}</div>
+      <div class="ex-grid">${exHtml}</div>
+    </div>`;
+
+  (bp.day==='upper'?mainU:mainL).appendChild(section);
+});
+
+document.getElementById('total-count').textContent=totalEx;
+document.getElementById('upper-count').textContent=upperEx+' exercises';
+document.getElementById('lower-count').textContent=lowerEx+' exercises';
+
+// Render PNF
+const pg=document.getElementById('pnf-grid');
+pnfData.forEach(p=>{
+  pg.innerHTML+=`<div class="pnf-card">
+    <h4>${p.n}</h4>
+    <p><span class="pnf-eq">${p.e}</span><br><span class="pnf-sets">${p.s}</span><br>${p.d}</p>
+  </div>`;
+});
+
+// ═══ TOGGLE ═══
+function toggleSection(hdr){
+  const sec=hdr.closest('.bp-section');
+  sec.classList.toggle('open');
+}
+
+// ═══ FILTER & SEARCH ═══
+let currentFilter='all';
+
+document.querySelectorAll('.pill').forEach(p=>{
+  p.addEventListener('click',()=>{
+    document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+    p.classList.add('active');
+    currentFilter=p.dataset.f;
+    document.getElementById('search').value='';
+    apply();
+  });
+});
+
+function setFilter(f){
+  document.querySelectorAll('.pill').forEach(x=>x.classList.remove('active'));
+  const pill=document.querySelector(`.pill[data-f="${f}"]`);
+  if(pill) pill.classList.add('active');
+  currentFilter=f;
+  document.getElementById('search').value='';
+  apply();
+  document.querySelector('.day-label').scrollIntoView({behavior:'smooth'});
+}
+
+document.getElementById('search').addEventListener('input',apply);
+
+function apply(){
+  const q=document.getElementById('search').value.toLowerCase().trim();
+  const cards=document.querySelectorAll('.ex-card');
+  const sections=document.querySelectorAll('.bp-section');
+  let visible=0;
+
+  // Determine which days to show sections for
+  const showUpper=currentFilter==='all'||currentFilter==='upper'||!['lower'].includes(currentFilter);
+  const showLower=currentFilter==='all'||currentFilter==='lower'||!['upper'].includes(currentFilter);
+
+  sections.forEach(sec=>{
+    const secDay=sec.dataset.day;
+    const exCards=sec.querySelectorAll('.ex-card');
+    let secVisible=0;
+
+    exCards.forEach(card=>{
+      const cDay=card.dataset.day;
+      const cTypes=card.dataset.types;
+      const cSearch=card.dataset.search;
+
+      let pass=true;
+      if(currentFilter==='upper'&&cDay!=='upper') pass=false;
+      else if(currentFilter==='lower'&&cDay!=='lower') pass=false;
+      else if(['iso','weighted','fascia','pnf','stretch','mob'].includes(currentFilter)&&!cTypes.includes(currentFilter)) pass=false;
+
+      if(q&&!cSearch.includes(q)) pass=false;
+
+      card.classList.toggle('hidden',!pass);
+      if(pass){ visible++; secVisible++; }
+    });
+
+    const hide=secVisible===0;
+    sec.classList.toggle('hidden-section',hide);
+    if(!hide&&(q||currentFilter!=='all')&&secVisible>0){
+      sec.classList.add('open');
+    }
+  });
+
+  // Show/hide day labels
+  document.querySelectorAll('.day-label').forEach((dl,i)=>{
+    const isUpper=i===0;
+    const relevantSections=document.querySelectorAll(`.bp-section[data-day="${isUpper?'upper':'lower'}"]`);
+    let anyVisible=false;
+    relevantSections.forEach(s=>{ if(!s.classList.contains('hidden-section')) anyVisible=true; });
+    dl.style.display=anyVisible?'':'none';
+  });
+
+  document.getElementById('no-res').style.display=visible===0?'block':'none';
+  const sc=document.getElementById('sc');
+  sc.textContent=(q||currentFilter!=='all')?`${visible}`:'';
+}
+</script>
+</body>
+</html>
